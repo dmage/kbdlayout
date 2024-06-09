@@ -54,8 +54,9 @@ class Key:
         text_x = ctx.x + width/2
         text_y = ctx.y + height/2
         return (
-            f'<rect x="{ctx.x + ctx.m}" y="{ctx.y + ctx.m}" width="{width - 2*ctx.m}" height="{height - 2*ctx.m}"/>',
-            f'<text x="{text_x}" y="{text_y}">{svg_label(text_x, label)}</text>',
+            f'<g onclick="alert(\'{label}\')"><rect class="btn" x="{ctx.x + ctx.m}" y="{ctx.y + ctx.m}" width="{width - 2*ctx.m}" height="{height - 2*ctx.m}"/>' +
+                f'<text class="lbl" x="{text_x}" y="{text_y}">{svg_label(text_x, label)}</text></g>',
+            f'',
             width, height,
         )
 
@@ -93,8 +94,9 @@ class ISOEnterKey:
             [(ctx.m, ctx.m), (-ctx.m, ctx.m), (-ctx.m, -ctx.m), (ctx.m, -ctx.m), (ctx.m, -ctx.m), (ctx.m, -ctx.m), (ctx.m, ctx.m)],
         )
         return (
-            f'<polygon points="{p}"/>',
-            f'<text x="{ctx.x + width1/2}" y="{ctx.y + height1/2}">{svg_label(ctx.x + width1/2, label)}</text>',
+            f'<g onclick="alert(\'{label}\')"><polygon class="btn" points="{p}"/>' +
+                f'<text class="lbl" x="{ctx.x + width1/2}" y="{ctx.y + height1/2}">{svg_label(ctx.x + width1/2, label)}</text></g>',
+            f'',
             width1+width2, height1+height2,
         ) 
 
@@ -609,8 +611,12 @@ def main():
     print(f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="{width+3}" height="{height+3}" viewBox="-1 -1 {width+2} {height+2}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g font-family="Arial" font-size="{args.scale // 4}px" font-size-adjust="0.518"><g fill="#eee" stroke="#ccc" stroke-linejoin="round">''' + svg_rects + '''</g>
-<g fill="#333" text-anchor="middle" text-align="center">''' + svg_texts + '''</g></g>
+<style>
+.btn{{fill:#eee;stroke:#ccc;stroke-linejoin:round}}
+.lbl{{fill:#333;text-anchor:middle;text-align:center}}
+</style>
+<g font-family="Arial" font-size="{args.scale // 4}px" font-size-adjust="0.518"><g>''' + svg_rects + '''</g>
+<g>''' + svg_texts + '''</g></g>
 </svg>''')
 
 
