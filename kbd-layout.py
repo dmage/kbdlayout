@@ -222,6 +222,73 @@ class HBlock:
             ctx = ctx.shift(child_width, 0)
         return svg_rects, svg_texts, total_width, height
 
+# from https://github.com/legionus/kbd/blob/master/src/libkeymap/syms.synonyms.h
+keysym_synonyms = {
+    "Control_h": "BackSpace",
+	"Control_i": "Tab",
+	"Control_j": "Linefeed",
+	"Home": "Find",
+	"End": "Select",
+	"PageUp": "Prior",
+	"PageDown": "Next",
+	"multiplication": "multiply",
+	"pound": "sterling",
+	"pilcrow": "paragraph",
+	"Oslash": "Ooblique",
+	"Shift_L": "ShiftL",
+	"Shift_R": "ShiftR",
+	"Control_L": "CtrlL",
+	"Control_R": "CtrlR",
+	"AltL": "Alt",
+	"AltR": "AltGr",
+	"Alt_L": "Alt",
+	"Alt_R": "AltGr",
+	"AltGr_L": "Alt",
+	"AltGr_R": "AltGr",
+	"AltLLock": "Alt_Lock",
+	"AltRLock": "AltGr_Lock",
+	"SCtrl": "SControl",
+	"Spawn_Console": "KeyboardSignal",
+	"Uncaps_Shift": "CapsShift",
+	"lambda": "lamda",
+	"Lambda": "Lamda",
+	"xi": "ksi",
+	"Xi": "Ksi",
+	"chi": "khi",
+	"Chi": "Khi",
+	"tilde": "asciitilde",
+	"circumflex": "asciicircum",
+	"dead_ogonek": "dead_cedilla",
+	"dead_caron": "dead_circumflex",
+	"dead_breve": "dead_tilde",
+	"dead_doubleacute": "dead_tilde",
+	"Idotabove": "Iabovedot",
+	"dotlessi": "idotless",
+	"no-break_space": "nobreakspace",
+	"paragraph_sign": "section",
+	"soft_hyphen": "hyphen",
+	"bielorussian_cyrillic_capital_letter_i": "ukrainian_cyrillic_capital_letter_i",
+	"cyrillic_capital_letter_kha": "cyrillic_capital_letter_ha",
+	"cyrillic_capital_letter_ge": "cyrillic_capital_letter_ghe",
+	"cyrillic_capital_letter_ia": "cyrillic_capital_letter_ya",
+	"cyrillic_capital_letter_iu": "cyrillic_capital_letter_yu",
+	"cyrillic_capital_letter_yeri": "cyrillic_capital_letter_yeru",
+	"cyrillic_capital_letter_reversed_e": "cyrillic_capital_letter_e",
+	"cyrillic_capital_letter_ii": "cyrillic_capital_letter_i",
+	"cyrillic_capital_letter_short_ii": "cyrillic_capital_letter_short_i",
+	"bielorussian_cyrillic_small_letter_i": "ukrainian_cyrillic_small_letter_i",
+	"cyrillic_small_letter_kha": "cyrillic_small_letter_ha",
+	"cyrillic_small_letter_ge": "cyrillic_small_letter_ghe",
+	"cyrillic_small_letter_ia": "cyrillic_small_letter_ya",
+	"cyrillic_small_letter_iu": "cyrillic_small_letter_yu",
+	"cyrillic_small_letter_yeri": "cyrillic_small_letter_yeru",
+	"cyrillic_small_letter_reversed_e": "cyrillic_small_letter_e",
+	"cyrillic_small_letter_ii": "cyrillic_small_letter_i",
+	"cyrillic_small_letter_short_ii": "cyrillic_small_letter_short_i",
+	"ukrainian_cyrillic_small_letter_ghe_with_upturn": "cyrillic_small_letter_ghe_with_upturn",
+	"ukrainian_cyrillic_capital_letter_ghe_with_upturn": "cyrillic_capital_letter_ghe_with_upturn",
+	"rightanglequote": "guillemotright",
+}
 
 def load_keymap(filename, *, keymap=None):
     names = {
@@ -236,6 +303,28 @@ def load_keymap(filename, *, keymap=None):
         'nine': '9',
         'zero': '0',
 
+        'Aacute': 'Á',
+        'Ccaron': 'Č',
+        'Eacute': 'É',
+        'Ecaron': 'Ě',
+        'Iacute': 'Í',
+        'Rcaron': 'Ř',
+        'Scaron': 'Š',
+        'Uacute': 'Ú',
+        'Uring': 'Ů',
+        'Yacute': 'Ý',
+        'Zcaron': 'Ž',
+        'aacute': 'á',
+        'ccaron': 'č',
+        'eacute': 'é',
+        'ecaron': 'ě',
+        'rcaron': 'ř',
+        'scaron': 'š',
+        'uacute': 'ú',
+        'uring': 'ů',
+        'yacute': 'ý',
+        'zcaron': 'ž',
+
         'Alt': 'ALT',
         'AltGr': 'ALTGR',
         'Break': 'BREAK',
@@ -243,7 +332,9 @@ def load_keymap(filename, *, keymap=None):
         'Control': 'CTRL',
         'Delete': 'BACKSPACE',
         'Down': '↓',
+        'Select': 'END',
         'Escape': 'ESC',
+        'Find': 'HOME',
         'Insert': 'INS',
         'KP_Add': '+ (KP)',
         'KP_Divide': '/ (KP)',
@@ -253,6 +344,8 @@ def load_keymap(filename, *, keymap=None):
         'KP_Subtract': '- (KP)',
         'Left': '←',
         'Num_Lock': 'NUM LOCK',
+        'Next': 'PGDN',
+        'Prior': 'PGUP',
         'Remove': 'DEL',
         'Return': '↵',
         'Right': '→',
@@ -261,61 +354,106 @@ def load_keymap(filename, *, keymap=None):
         'Tab': 'TAB',
         'Up': '↑',
         'VoidSymbol': 'VOID',
-        'aacute': 'á',
+        'ampersand': '&',
         'apostrophe': "'",
+        'asciicircum': '^',
+        'asciitilde': '~',
+        'asterisk': '*',
+        'at': '@',
         'backslash': '\\',
+        'bar': '|',
+        'braceleft': '{',
+        'braceright': '}',
         'bracketleft': '[',
         'bracketright': ']',
-        'ccaron': 'č',
+        'colon': ':',
         'comma': ',',
-        'eacute': 'é',
-        'ecaron': 'ě',
+        'dead_acute': '◌́',
+        'dead_caron': '◌̌',
+        'dead_diaeresis': '◌̈',
+        'dollar': '$',
         'equal': '=',
+        'exclam': '!',
         'grave': '`',
+        'greater': '>',
         'iacute': 'í',
         'less': '<',
         'minus': '-',
         'numbersign': '#',
         'parenleft': '(',
         'parenright': ')',
+        'percent': '%',
         'period': '.',
-        'rcaron': 'ř',
-        'scaron': 'š',
+        'plus': '+',
+        'question': '?',
+        'quotedbl': '"',
         'section': '§',
         'semicolon': ';',
         'slash': '/',
         'space': 'SPACE',
-        'uacute': 'ú',
-        'uring': 'ů',
-        'yacute': 'ý',
-        'zcaron': 'ž',
+        'sterling': '£',
+        'underscore': '_',
     }
-    for i in range(26):
-        names[chr(ord('a')+i)] = chr(ord('A')+i)
     for i in range(10):
         names[f'KP_{i}'] = f'{i} (KP)'
+
+    modifiers = {
+        'plain': 0,
+        'shift': 1,
+        'altgr': 2,
+        'control': 4,
+        'alt': 8,
+        'shiftl': 16,
+        'shiftr': 32,
+        'ctrll': 64,
+        'ctrlr': 128,
+        'capsshift': 256,
+    }
+
+    def starts_with_modifier(s):
+        for modifier, value in modifiers.items():
+            if s.startswith(modifier):
+                return True
+        return False
 
     if keymap is None:
         keymap = {}
     with open(filename, 'r', encoding='latin1') as f:
+        line_continuation = ''
         for line in f:
-            line = line.strip()
+            line = line.strip('\n')
+            if line.endswith('\\'):
+                line_continuation += line[:-1]
+                continue
+            line = line_continuation + line
+            line_continuation = ''
+
+            line = line.split('#', 1)[0].strip()
+            if not line:
+                continue
             if line.startswith('include'):
                 filename = line[len('include'):].strip()
                 filename = filename[1:-1] if filename[0] in '\'"' and filename[-1] == filename[0] else filename
                 load_keymap('keymaps/' + filename + '.inc', keymap=keymap)
-            if line.startswith('keycode'):
+            elif line.startswith('keycode'):
                 line = line[len('keycode'):]
                 code, definition = line.split('=')
                 code = int(code.strip())
                 definition = definition.strip().split()
                 if not definition:
                     continue
-                definition = definition[0]
-                if definition.startswith('+'):
-                    definition = definition[1:]
-                name = names.get(definition, definition)
-                keymap[code] = name
+                keysym = definition[0]
+                if keysym.startswith('+'):
+                    keysym = keysym[1:]
+                if keysym in keysym_synonyms:
+                    keysym = keysym_synonyms[keysym]
+                keymap[code] = names.get(keysym, keysym)
+            elif starts_with_modifier(line):
+                pass
+            elif line.startswith('charset') or line.startswith('keymaps') or line.startswith('alt_is_meta') or line.startswith('string') or line.startswith('compose'):
+                pass
+            else:
+                raise ValueError(f'Unexpected line: {line}')
     return keymap
 
 
@@ -323,10 +461,6 @@ def load_keymap(filename, *, keymap=None):
 # 84? (Last_Console)
 # 85?
 # 89, ..., 95?
-# 102? (Find)
-# 104? (Prior)
-# 107? (Select)
-# 109? (Next)
 # 112? (Macro)
 # 113? (F13)
 # 114? (F14)
@@ -339,6 +473,17 @@ def load_keymap(filename, *, keymap=None):
 # 125? (Decr_Console)
 # 126? (Incr_Console)
 # 127? (Compose)
+
+# Modifier keys
+# Shift 1
+# AltGr 2
+# Control 4
+# Alt 8
+# ShiftL 16
+# ShiftR 32
+# CtrlL 64
+# CtrlR 128
+# CapsShift 256 
 
 ESC = [Key(1)]
 F1_F4 = [Key(i) for i in range(59, 63)]  # F1, F2, F3, F4
@@ -385,8 +530,8 @@ iso_layout = HBlock(
     VBlock([
         Row(PRTSC_BREAK),
         Space(height=0.5, width=3),
-        Row([Key(110), Key('?HOME'), Key('?PGUP')]),  # Insert, ?, ?
-        Row([Key(111), Key('?END'), Key('?PGDN')]),  # Remove, ?, ?
+        Row([Key(110), Key(102), Key(104)]),  # Insert, Home, Page Up
+        Row([Key(111), Key(107), Key(109)]),  # Remove, End, Page Down
         Space(height=1, width=3),
         Row([Space(1), Key(103), Space(1)]),  # Up
         Row([Key(105), Key(108), Key(106)]),  # Left, Down, Right
@@ -396,10 +541,11 @@ iso_layout = HBlock(
 )
 
 import sys
-svg_rects, svg_texts, width, height = iso_layout.render(RenderContext(0, 0, scale=40, keymap=load_keymap(sys.argv[1])))
+scale = 60
+svg_rects, svg_texts, width, height = iso_layout.render(RenderContext(0, 0, scale=scale, keymap=load_keymap(sys.argv[1])))
 print(f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="{width+3}" height="{height+3}" viewBox="-1 -1 {width+2} {height+2}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g font-family="Arial" font-size="10px" font-size-adjust="0.518"><g fill="#eee" stroke="#ccc" stroke-linejoin="round">''' + svg_rects + '''</g>
+<g font-family="Arial" font-size="{scale // 4}px" font-size-adjust="0.518"><g fill="#eee" stroke="#ccc" stroke-linejoin="round">''' + svg_rects + '''</g>
 <g fill="#333" text-anchor="middle" text-align="center">''' + svg_texts + '''</g></g>
 </svg>''')

@@ -1,4 +1,4 @@
-KEYMAPS = cz.map defkeymap.map ruwin_alt-UTF-8.map uk.map
+KEYMAPS = cz.map defkeymap.map fr.map ruwin_alt-UTF-8.map uk.map
 
 examples:
 	mkdir -p ./examples
