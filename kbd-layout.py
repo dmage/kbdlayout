@@ -488,7 +488,7 @@ def expand_one_keysym(keysym, selected_columns):
         return default_keycode_keysyms(c, c.lower(), selected_columns)
     if len(c) == 1 and 'a' <= c <= 'z':
         return default_keycode_keysyms(c, c.upper(), selected_columns)
-    return [keysym]*selected_columns[-1]
+    return [keysym]*(selected_columns[-1] + 1)
 
 
 def load_keymap(filename, *, keymap=None):
@@ -543,10 +543,12 @@ def load_keymap(filename, *, keymap=None):
                 elif len(definition) == 1:
                     keysyms = expand_one_keysym(definition[0], columns)
                 else:
-                    keysyms = definition
-                for i, keysym in enumerate(keysyms):
-                    if keysym in keysym_synonyms:
-                        keysyms[i] = keysym_synonyms[keysym]
+                    keysyms = ['VoidSymbol']*(columns[-1] + 1)
+                    for i, keysym in enumerate(definition):
+                        column = columns[i]
+                        if keysym in keysym_synonyms:
+                            keysym = keysym_synonyms[keysym]
+                        keysyms[column] = keysym
                 keymap[code] = keysyms
             elif starts_with_modifier(line) != "":
                 column = 0
@@ -556,14 +558,16 @@ def load_keymap(filename, *, keymap=None):
                     line = line[len(modifier):].lstrip()
                 assert line.startswith('keycode')
                 line = line[len('keycode'):].lstrip()
-                code, definition = line.split('=')
+                code, keysym = line.split('=')
                 code = int(code.strip())
-                definition = definition.strip()
+                keysym = keysym.strip()
+                if keysym in keysym_synonyms:
+                    keysym = keysym_synonyms[keysym]
                 if code not in keymap:
                     keymap[code] = []
                 if column >= len(keymap[code]):
                     keymap[code].extend(['VoidSymbol']*(column - len(keymap[code]) + 1))
-                keymap[code][column] = definition
+                keymap[code][column] = keysym
             elif line.startswith('keymaps'):
                 columns_list = line[len('keymaps'):].strip().split(',')
                 columns = []
