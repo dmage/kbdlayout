@@ -31,6 +31,7 @@ def svg_label(text_x, label):
 
 class Key:
     def __init__(self, label, *, width=1, height=1):
+        global keys
         self._label = label
         self._width = width
         self._height = height
@@ -42,6 +43,9 @@ class Key:
         if self._height != 1:
             args.append(f'height={self._height}')
         return f'Key({", ".join(args)})'
+
+    def keys(self):
+        return 1
 
     def render(self, ctx):
         label = ctx.label(self._label)
@@ -66,6 +70,9 @@ class ISOEnterKey:
 
     def __repr__(self):
         return f'ISOEnterKey({self._label}, {self._width1}, {self._width2}, {self._height1}, {self._height2})'
+
+    def keys(self):
+        return 1
 
     def _points(self, p_deltas, margin):
         p, deltas = p_deltas[0], p_deltas[1:]
@@ -105,6 +112,9 @@ class Space:
             args.append(f'height={self._height}')
         return f'Space({", ".join(args)})'
 
+    def keys(self):
+        return 0
+
     def render(self, ctx):
         return (f'', f'', self._width*ctx.scale, self._height*ctx.scale)
 
@@ -115,6 +125,9 @@ class Row:
 
     def __repr__(self):
         return f'Row({", ".join(repr(child) for child in self._children)})'
+
+    def keys(self):
+        return sum(child.keys() for child in self._children)
 
     def render(self, ctx):
         svg_rects, svg_texts, width, height = self._children[0].render(ctx)
@@ -140,6 +153,9 @@ class TwoRowsISOEnter:
 
     def __repr__(self):
         return f'TwoRowsISOEnter({self._row1}, {self._row2}, {self._width1}, {self._width2})'
+
+    def keys(self):
+        return self._row1.keys() + self._row2.keys() + 1
 
     def render(self, ctx):
         row1_svg_rects, row1_svg_texts, row1_width, row1_height = self._row1.render(ctx)
@@ -167,6 +183,9 @@ class TwoRowsKey:
     def __repr__(self):
         return f'TwoRowsKey({self._row1}, {self._row2}, {self._label})'
 
+    def keys(self):
+        return self._row1.keys() + self._row2.keys() + 1
+
     def render(self, ctx):
         row1_svg_rects, row1_svg_texts, row1_width, row1_height = self._row1.render(ctx)
         row2_svg_rects, row2_svg_texts, row2_width, row2_height = self._row2.render(ctx.shift(0, row1_height))
@@ -188,6 +207,9 @@ class VBlock:
     def __repr__(self):
         return f'VBlock({", ".join(repr(child) for child in self._children)})'
 
+    def keys(self):
+        return sum(child.keys() for child in self._children)
+
     def render(self, ctx):
         svg_rects, svg_texts, width, height = self._children[0].render(ctx)
         total_height = height
@@ -208,6 +230,9 @@ class HBlock:
 
     def __repr__(self):
         return f'HBlock({", ".join(repr(child) for child in self._children)})'
+
+    def keys(self):
+        return sum(child.keys() for child in self._children)
 
     def render(self, ctx):
         svg_rects, svg_texts, width, height = self._children[0].render(ctx)
@@ -325,14 +350,16 @@ def load_keymap(filename, *, keymap=None):
         'yacute': 'ý',
         'zcaron': 'ž',
 
+        'Control_backslash': 'C-\\',
+
         'Alt': 'ALT',
         'AltGr': 'ALTGR',
+        'AltGr_Lock': 'ALTGR LOCK',
         'Break': 'BREAK',
         'Caps_Lock': 'CAPS LOCK',
         'Control': 'CTRL',
         'Delete': 'BACKSPACE',
         'Down': '↓',
-        'Select': 'END',
         'Escape': 'ESC',
         'Find': 'HOME',
         'Insert': 'INS',
@@ -343,14 +370,20 @@ def load_keymap(filename, *, keymap=None):
         'KP_Period': '. (KP)',
         'KP_Subtract': '- (KP)',
         'Left': '←',
-        'Num_Lock': 'NUM LOCK',
         'Next': 'PGDN',
+        'Num_Lock': 'NUM LOCK',
+        'Pause': 'PAUSE',
         'Prior': 'PGUP',
         'Remove': 'DEL',
         'Return': '↵',
         'Right': '→',
         'Scroll_Lock': 'SCROLL LOCK',
+        'Select': 'END',
         'Shift': 'SHIFT',
+        'ShiftL': 'SHIFTL',
+        'ShiftL_Lock': 'SHIFTL LOCK',
+        'ShiftR': 'SHIFTR',
+        'ShiftR_Lock': 'SHIFTR LOCK',
         'Tab': 'TAB',
         'Up': '↑',
         'VoidSymbol': 'VOID',
@@ -470,9 +503,6 @@ def load_keymap(filename, *, keymap=None):
 # 118? (KP_MinPlus)
 # 119? (Pause)
 # 120, ..., 124?
-# 125? (Decr_Console)
-# 126? (Incr_Console)
-# 127? (Compose)
 
 # Modifier keys
 # Shift 1
@@ -489,11 +519,26 @@ ESC = [Key(1)]
 F1_F4 = [Key(i) for i in range(59, 63)]  # F1, F2, F3, F4
 F5_F8 = [Key(i) for i in range(63, 67)]  # F5, F6, F7, F8
 F9_F12 = [Key(67), Key(68), Key(87), Key(88)]  # F9, F10, F11, F12
-ONE_EQUAL = [Key(i) for i in range(2, 14)]  # 1, 2, ..., 0, -, =
-Q_P_2 = [Key(i) for i in range(16, 28)]  # Q, W, ..., P, [, ]
-A_L_2 = [Key(i) for i in range(30, 41)]  # A, S, ..., L, ;, '
-Z_M_3 = [Key(i) for i in range(44, 54)]  # Z, X, ..., M, comma, ., /
-PRTSC_BREAK = [Key(99), Key(70), Key(101)]  # Print Screen, Scroll Lock, Break
+X1_ONE_ZERO_X3 = [Key(41)] + [Key(i) for i in range(2, 14)] + [Key(14, width=2)]  # `, 1, 2, ..., 0, -, =, Backspace
+X1_Q_P_X2 = [Key(15, width=1.5)] + [Key(i) for i in range(16, 28)]  # Caps Lock, Q, W, ..., P, [, ]
+X1_A_L_X2 = [Key(58, width=1.75)] + [Key(i) for i in range(30, 41)]  # A, S, ..., L, ;, '
+Z_M_X4 = [Key(i) for i in range(44, 54)] + [Key(54, width=2.75)]  # Z, X, ..., M, comma, ., /, Right Shift
+
+BOTTOM_ROW = [
+    Key(29, width=1.25), Key(125, width=1.25), Key(56, width=1.25),
+    Key(57, width=6.25),
+    Key(100, width=1.25), Key(126, width=1.25), Key(127, width=1.25), Key(97, width=1.25),
+]
+
+SPECIAL_AND_DIRECTION_KEYS = [
+    Row([Key(99), Key(70), Key(119)]),  # Print Screen, Scroll Lock, Pause
+    Space(height=0.5, width=3),
+    Row([Key(110), Key(102), Key(104)]),  # Insert, Home, Page Up
+    Row([Key(111), Key(107), Key(109)]),  # Remove, End, Page Down
+    Space(height=1, width=3),
+    Row([Space(1), Key(103), Space(1)]),  # Up
+    Row([Key(105), Key(108), Key(106)]),  # Left, Down, Right
+]
 
 KEYPAD = [
     Row([Key(69), Key(98), Key(55), Key(74)]),  # Num Lock, KP_Divide, KP_Multiply, KP_Subtract
@@ -509,43 +554,65 @@ KEYPAD = [
     ),
 ]
 
-iso_layout = HBlock(
+KEYCODE_ENTER = 28
+KEYCODE_LEFT_SHIFT = 42
+KEYCODE_BACKSLASH = 43
+KEYCODE_LESS = 86  # additional key on the 102/105 key layout
+
+ANSI_LAYOUT = HBlock(
     VBlock([
-        Row(ESC + [Space(1)] + F1_F4 + [Space(0.5)] + F5_F8 + [Space(0.5)] + F9_F12), 
+        Row(ESC + [Space(1)] + F1_F4 + [Space(0.5)] + F5_F8 + [Space(0.5)] + F9_F12),
         Space(height=0.5, width=15),
-        Row([Key(41)] + ONE_EQUAL + [Key(14, width=2)]),
-        TwoRowsISOEnter(
-            Row([Key(15, width=1.5)] + Q_P_2),
-            Row([Key(58, width=1.75)] + A_L_2 + [Key(43)]),
-            28, 1.5, 1.25
-        ),
-        Row([Key(42, width=1.25), Key(86)] + Z_M_3 + [Key(54, width=2.75)]),
-        Row([
-            Key(29, width=1.25), Key('?WIN', width=1.25), Key(56, width=1.25),
-            Key(57, width=6.25),
-            Key(100, width=1.25), Key('?WIN', width=1.25), Key('?MENU', width=1.25), Key(97, width=1.25),
-        ]),
+        Row(X1_ONE_ZERO_X3),
+        Row(X1_Q_P_X2 + [Key(KEYCODE_BACKSLASH, width=1.5)]),
+        Row(X1_A_L_X2 + [Key(KEYCODE_ENTER, width=2.25)]),
+        Row([Key(KEYCODE_LEFT_SHIFT, width=2.25)] + Z_M_X4),
+        Row(BOTTOM_ROW),
     ]),
     Space(0.25, height=6.5),
-    VBlock([
-        Row(PRTSC_BREAK),
-        Space(height=0.5, width=3),
-        Row([Key(110), Key(102), Key(104)]),  # Insert, Home, Page Up
-        Row([Key(111), Key(107), Key(109)]),  # Remove, End, Page Down
-        Space(height=1, width=3),
-        Row([Space(1), Key(103), Space(1)]),  # Up
-        Row([Key(105), Key(108), Key(106)]),  # Left, Down, Right
-    ]),
+    VBlock(SPECIAL_AND_DIRECTION_KEYS),
     Space(0.25, height=6.5),
     VBlock([Space(height=1.5, width=4)] + KEYPAD),
 )
 
-import sys
-scale = 60
-svg_rects, svg_texts, width, height = iso_layout.render(RenderContext(0, 0, scale=scale, keymap=load_keymap(sys.argv[1])))
-print(f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+ISO_LAYOUT = HBlock(
+    VBlock([
+        Row(ESC + [Space(1)] + F1_F4 + [Space(0.5)] + F5_F8 + [Space(0.5)] + F9_F12), 
+        Space(height=0.5, width=15),
+        Row(X1_ONE_ZERO_X3),
+        TwoRowsISOEnter(
+            Row(X1_Q_P_X2),
+            Row(X1_A_L_X2 + [Key(KEYCODE_BACKSLASH)]),
+            KEYCODE_ENTER, 1.5, 1.25
+        ),
+        Row([Key(KEYCODE_LEFT_SHIFT, width=1.25), Key(KEYCODE_LESS)] + Z_M_X4),
+        Row(BOTTOM_ROW),
+    ]),
+    Space(0.25, height=6.5),
+    VBlock(SPECIAL_AND_DIRECTION_KEYS),
+    Space(0.25, height=6.5),
+    VBlock([Space(height=1.5, width=4)] + KEYPAD),
+)
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Render a keyboard layout to SVG.')
+    parser.add_argument('--iso', action='store_true', help='Render an ISO layout.')
+    parser.add_argument('--scale', type=int, default=60, help='The scale of the rendered layout.')
+    parser.add_argument('keymap', help='The keymap file to use.')
+    args = parser.parse_args()
+
+    layout = ISO_LAYOUT if args.iso else ANSI_LAYOUT
+    svg_rects, svg_texts, width, height = layout.render(RenderContext(0, 0, scale=args.scale, keymap=load_keymap(args.keymap)))
+    print(f'''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="{width+3}" height="{height+3}" viewBox="-1 -1 {width+2} {height+2}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g font-family="Arial" font-size="{scale // 4}px" font-size-adjust="0.518"><g fill="#eee" stroke="#ccc" stroke-linejoin="round">''' + svg_rects + '''</g>
+<g font-family="Arial" font-size="{args.scale // 4}px" font-size-adjust="0.518"><g fill="#eee" stroke="#ccc" stroke-linejoin="round">''' + svg_rects + '''</g>
 <g fill="#333" text-anchor="middle" text-align="center">''' + svg_texts + '''</g></g>
 </svg>''')
+
+
+if __name__ == '__main__':
+    main()
