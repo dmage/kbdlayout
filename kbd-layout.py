@@ -54,7 +54,7 @@ class Key:
         text_x = ctx.x + width/2
         text_y = ctx.y + height/2
         return (
-            f'<g onclick="alert(\'{label}\')"><rect class="btn" x="{ctx.x + ctx.m}" y="{ctx.y + ctx.m}" width="{width - 2*ctx.m}" height="{height - 2*ctx.m}"/>' +
+            f'<g onclick="alert(\'{xml_escape(label)}\')"><rect class="btn" x="{ctx.x + ctx.m}" y="{ctx.y + ctx.m}" width="{width - 2*ctx.m}" height="{height - 2*ctx.m}"/>' +
                 f'<text class="lbl" x="{text_x}" y="{text_y}">{svg_label(text_x, label)}</text></g>',
             f'',
             width, height,
@@ -94,7 +94,7 @@ class ISOEnterKey:
             [(ctx.m, ctx.m), (-ctx.m, ctx.m), (-ctx.m, -ctx.m), (ctx.m, -ctx.m), (ctx.m, -ctx.m), (ctx.m, -ctx.m), (ctx.m, ctx.m)],
         )
         return (
-            f'<g onclick="alert(\'{label}\')"><polygon class="btn" points="{p}"/>' +
+            f'<g onclick="alert(\'{xml_escape(label)}\')"><polygon class="btn" points="{p}"/>' +
                 f'<text class="lbl" x="{ctx.x + width1/2}" y="{ctx.y + height1/2}">{svg_label(ctx.x + width1/2, label)}</text></g>',
             f'',
             width1+width2, height1+height2,
