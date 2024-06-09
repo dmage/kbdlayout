@@ -261,20 +261,34 @@ def load_keymap(filename, *, keymap=None):
         'Tab': 'TAB',
         'Up': '↑',
         'VoidSymbol': 'VOID',
+        'aacute': 'á',
         'apostrophe': "'",
         'backslash': '\\',
         'bracketleft': '[',
         'bracketright': ']',
+        'ccaron': 'č',
         'comma': ',',
+        'eacute': 'é',
+        'ecaron': 'ě',
         'equal': '=',
         'grave': '`',
+        'iacute': 'í',
         'less': '<',
         'minus': '-',
         'numbersign': '#',
+        'parenleft': '(',
+        'parenright': ')',
         'period': '.',
+        'rcaron': 'ř',
+        'scaron': 'š',
+        'section': '§',
         'semicolon': ';',
         'slash': '/',
         'space': 'SPACE',
+        'uacute': 'ú',
+        'uring': 'ů',
+        'yacute': 'ý',
+        'zcaron': 'ž',
     }
     for i in range(26):
         names[chr(ord('a')+i)] = chr(ord('A')+i)
@@ -298,6 +312,8 @@ def load_keymap(filename, *, keymap=None):
                 if not definition:
                     continue
                 definition = definition[0]
+                if definition.startswith('+'):
+                    definition = definition[1:]
                 name = names.get(definition, definition)
                 keymap[code] = name
     return keymap
