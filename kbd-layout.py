@@ -2,7 +2,56 @@
 # -*- coding: utf-8 -*-
 import json
 
-LABELS = {
+KT_LATIN = {
+    'nul': '␀',
+    'Control_a': 'C-a',
+    'Control_b': 'C-b',
+    'Control_c': 'C-c',
+    'Control_d': 'C-d',
+    'Control_e': 'C-e',
+    'Control_f': 'C-f',
+    'Control_g': 'C-g',
+    'BackSpace': 'C-h',
+    'Tab': 'TAB',
+    'Linefeed': 'C-j',
+    'Control_k': 'C-k',
+    'Control_l': 'C-l',
+    'Control_m': 'C-m',
+    'Control_n': 'C-n',
+    'Control_o': 'C-o',
+    'Control_p': 'C-p',
+    'Control_q': 'C-q',
+    'Control_r': 'C-r',
+    'Control_s': 'C-s',
+    'Control_t': 'C-t',
+    'Control_u': 'C-u',
+    'Control_v': 'C-v',
+    'Control_w': 'C-w',
+    'Control_x': 'C-x',
+    'Control_y': 'C-y',
+    'Control_z': 'C-z',
+    'Escape': 'ESC',
+    'Control_backslash': 'C-\\',
+    'Control_bracketright': 'C-]',
+    'Control_asciicircum': 'C-^',
+    'Control_underscore': 'C-_',
+    'space': 'SPACE',
+    'exclam': '!',
+    'quotedbl': '"',
+    'numbersign': '#',
+    'dollar': '$',
+    'percent': '%',
+    'ampersand': '&',
+    'apostrophe': "'",
+    'parenleft': '(',
+    'parenright': ')',
+    'asterisk': '*',
+    'plus': '+',
+    'comma': ',',
+    'minus': '-',
+    'period': '.',
+    'slash': '/',
+    'zero': '0',
     'one': '1',
     'two': '2',
     'three': '3',
@@ -12,13 +61,40 @@ LABELS = {
     'seven': '7',
     'eight': '8',
     'nine': '9',
-    'zero': '0',
+    'colon': ':',
+    'semicolon': ';',
+    'less': '<',
+    'equal': '=',
+    'greater': '>',
+    'question': '?',
+    'at': '@',
+    # A..Z
+    'bracketleft': '[',
+    'backslash': '\\',
+    'bracketright': ']',
+    'asciicircum': '^',
+    'underscore': '_',
+    'grave': '`',
+    # a..z
+    'braceleft': '{',
+    'bar': '|',
+    'braceright': '}',
+    'asciitilde': '~',
+    'Delete': '⌫',
+}
+for i in range(26):
+    KT_LATIN[chr(ord('a') + i)] = chr(ord("a") + i)
+    KT_LATIN[chr(ord('A') + i)] = chr(ord("A") + i)
 
+LABELS = {
+    **KT_LATIN,
     'Aacute': 'Á',
     'Ccaron': 'Č',
+    'Dstroke': 'Đ',
     'Eacute': 'É',
     'Ecaron': 'Ě',
     'Iacute': 'Í',
+    'Lstroke': 'Ł',
     'Rcaron': 'Ř',
     'Scaron': 'Š',
     'Uacute': 'Ú',
@@ -27,27 +103,31 @@ LABELS = {
     'Zcaron': 'Ž',
     'aacute': 'á',
     'ccaron': 'č',
+    'dstroke': 'đ',
     'eacute': 'é',
     'ecaron': 'ě',
+    'lstroke': 'ł',
     'rcaron': 'ř',
     'scaron': 'š',
+    'ssharp': 'ß',
     'uacute': 'ú',
     'uring': 'ů',
     'yacute': 'ý',
     'zcaron': 'ž',
 
-    'Control_backslash': 'C-\\',
-
     'Alt': 'ALT',
     'AltGr': 'ALTGR',
     'AltGr_Lock': 'ALTGR LOCK',
+    'Bare_Num_Lock': 'BARE NUM LOCK',
     'Break': 'BREAK',
     'Caps_Lock': 'CAPS LOCK',
+    'Compose': 'COM- POSE',
     'Control': 'CTRL',
-    'Delete': 'BACKSPACE',
+    'Decr_Console': 'DEC CON',
     'Down': '↓',
     'Escape': 'ESC',
     'Find': 'HOME',
+    'Incr_Console': 'INC CON',
     'Insert': 'INS',
     'KP_Add': '+ (KP)',
     'KP_Divide': '/ (KP)',
@@ -55,6 +135,7 @@ LABELS = {
     'KP_Multiply': '* (KP)',
     'KP_Period': '. (KP)',
     'KP_Subtract': '- (KP)',
+    'Last_Console': 'LAST CON',
     'Left': '←',
     'Next': 'PGDN',
     'Num_Lock': 'NUM LOCK',
@@ -63,6 +144,8 @@ LABELS = {
     'Remove': 'DEL',
     'Return': '↵',
     'Right': '→',
+    'Scroll_Backward': 'SCROLL BACK',
+    'Scroll_Forward': 'SCROLL FWD',
     'Scroll_Lock': 'SCROLL LOCK',
     'Select': 'END',
     'Shift': 'SHIFT',
@@ -70,56 +153,33 @@ LABELS = {
     'ShiftL_Lock': 'SHIFTL LOCK',
     'ShiftR': 'SHIFTR',
     'ShiftR_Lock': 'SHIFTR LOCK',
+    'Show_Memory': 'SHOW MEM',
+    'Show_Registers': 'SHOW REGS',
+    'Show_State': 'SHOW STATE',
     'Tab': 'TAB',
     'Up': '↑',
-    'VoidSymbol': 'VOID',
-    'ampersand': '&',
-    'apostrophe': "'",
-    'asciicircum': '^',
-    'asciitilde': '~',
-    'asterisk': '*',
-    'at': '@',
-    'backslash': '\\',
-    'bar': '|',
-    'braceleft': '{',
-    'braceright': '}',
-    'bracketleft': '[',
-    'bracketright': ']',
-    'colon': ':',
-    'comma': ',',
+    'VoidSymbol': '',
+    'currency': '¤',
     'dead_acute': '◌́',
     'dead_caron': '◌̌',
+    'dead_cedilla': '◌̧',
+    'dead_circumflex': '◌̂',
     'dead_diaeresis': '◌̈',
-    'dollar': '$',
-    'equal': '=',
-    'exclam': '!',
-    'grave': '`',
-    'greater': '>',
+    'dead_grave': '◌̀',
+    'dead_tilde': '◌̃',
+    'degree': '°',
+    'division': '÷',
     'iacute': 'í',
-    'less': '<',
-    'minus': '-',
-    'numbersign': '#',
-    'parenleft': '(',
-    'parenright': ')',
-    'percent': '%',
-    'period': '.',
-    'plus': '+',
-    'question': '?',
-    'quotedbl': '"',
+    'multiply': '×',
     'section': '§',
-    'semicolon': ';',
-    'slash': '/',
-    'space': 'SPACE',
     'sterling': '£',
-    'underscore': '_',
 }
 for i in range(10):
     LABELS[f'KP_{i}'] = f'{i} (KP)'
-for i in range(26):
-    LABELS['Control_' + chr(ord('a') + i)] = f'C-{chr(ord("a") + i)}'
-    LABELS['Meta_' + chr(ord('A') + i)] = f'M-{chr(ord("A") + i)}'
-    LABELS['Meta_' + chr(ord('a') + i)] = f'M-{chr(ord("a") + i)}'
-    LABELS['Meta_Control_' + chr(ord('a') + i)] = f'M-C-{chr(ord("a") + i)}'
+for i in range(64):
+    LABELS[f'Console_{i}'] = f'CON{i}'
+for keysym, label in KT_LATIN.items():
+    LABELS[f'Meta_{keysym}'] = f'M-{label}'
 
 def keysym_label(keysym):
     prefix = ""
@@ -471,7 +531,11 @@ def default_keycode_keysyms(x, X, selected_columns):
         control, control, control, control,
         f'Meta_{x}', f'Meta_{X}', f'Meta_{x}', f'Meta_{X}',
         f'Meta_{control}', f'Meta_{control}', f'Meta_{control}', f'Meta_{control}',
-    ]*16
+    ]
+    for i, keysym in enumerate(keysyms):
+        if keysym in keysym_synonyms:
+            keysyms[i] = keysym_synonyms[keysym]
+    keysyms *= 16
     result = ['VoidSymbol']*(selected_columns[-1] + 1)
     for column in selected_columns:
         if column >= len(result):
@@ -541,7 +605,10 @@ def load_keymap(filename, *, keymap=None):
                 if not definition:
                     keysyms = []
                 elif len(definition) == 1:
-                    keysyms = expand_one_keysym(definition[0], columns)
+                    keysym = definition[0]
+                    if keysym in keysym_synonyms:
+                        keysym = keysym_synonyms[keysym]
+                    keysyms = expand_one_keysym(keysym, columns)
                 else:
                     keysyms = ['VoidSymbol']*(columns[-1] + 1)
                     for i, keysym in enumerate(definition):
@@ -721,6 +788,9 @@ function mod(label) {
     default: return 0;
   }
 }
+function escapeXML(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 function switchColumn(column) {
   currentColumn = column;
   const keys = document.querySelectorAll(".key");
@@ -754,7 +824,20 @@ function switchColumn(column) {
         }
       }
     }
-    key.querySelector(".lbl").textContent = label;
+    const lbl = key.querySelector(".lbl");
+    if (label.indexOf(" ") != -1) {
+      tspans = "";
+      label.split(" ").forEach((word, i) => {
+        if (i == 0) {
+          tspans += `<tspan x="${lbl.getAttribute("x")}" dy="0">${escapeXML(word)}</tspan>`;
+        } else {
+          tspans += `<tspan x="${lbl.getAttribute("x")}" dy="1em">${escapeXML(word)}</tspan>`;
+        }
+      });
+      lbl.innerHTML = tspans;
+    } else {
+      lbl.innerHTML = escapeXML(label);
+    }
   }
 }
 window.addEventListener("DOMContentLoaded", () => {
