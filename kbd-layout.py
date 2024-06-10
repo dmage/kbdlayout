@@ -2,6 +2,74 @@
 # -*- coding: utf-8 -*-
 import json
 
+# from https://github.com/legionus/kbd/blob/master/src/libkeymap/syms.synonyms.h
+keysym_synonyms = {
+    "Control_h": "BackSpace",
+    "Control_i": "Tab",
+    "Control_j": "Linefeed",
+    "Home": "Find",
+    "End": "Select",
+    "PageUp": "Prior",
+    "PageDown": "Next",
+    "multiplication": "multiply",
+    "pound": "sterling",
+    "pilcrow": "paragraph",
+    "Oslash": "Ooblique",
+    "Shift_L": "ShiftL",
+    "Shift_R": "ShiftR",
+    "Control_L": "CtrlL",
+    "Control_R": "CtrlR",
+    "AltL": "Alt",
+    "AltR": "AltGr",
+    "Alt_L": "Alt",
+    "Alt_R": "AltGr",
+    "AltGr_L": "Alt",
+    "AltGr_R": "AltGr",
+    "AltLLock": "Alt_Lock",
+    "AltRLock": "AltGr_Lock",
+    "SCtrl": "SControl",
+    "Spawn_Console": "KeyboardSignal",
+    "Uncaps_Shift": "CapsShift",
+    "lambda": "lamda",
+    "Lambda": "Lamda",
+    "xi": "ksi",
+    "Xi": "Ksi",
+    "chi": "khi",
+    "Chi": "Khi",
+    "tilde": "asciitilde",
+    "circumflex": "asciicircum",
+    "dead_ogonek": "dead_cedilla",
+    "dead_caron": "dead_circumflex",
+    "dead_breve": "dead_tilde",
+    "dead_doubleacute": "dead_tilde",
+    "Idotabove": "Iabovedot",
+    "dotlessi": "idotless",
+    "no-break_space": "nobreakspace",
+    "paragraph_sign": "section",
+    "soft_hyphen": "hyphen",
+    "bielorussian_cyrillic_capital_letter_i": "ukrainian_cyrillic_capital_letter_i",
+    "cyrillic_capital_letter_kha": "cyrillic_capital_letter_ha",
+    "cyrillic_capital_letter_ge": "cyrillic_capital_letter_ghe",
+    "cyrillic_capital_letter_ia": "cyrillic_capital_letter_ya",
+    "cyrillic_capital_letter_iu": "cyrillic_capital_letter_yu",
+    "cyrillic_capital_letter_yeri": "cyrillic_capital_letter_yeru",
+    "cyrillic_capital_letter_reversed_e": "cyrillic_capital_letter_e",
+    "cyrillic_capital_letter_ii": "cyrillic_capital_letter_i",
+    "cyrillic_capital_letter_short_ii": "cyrillic_capital_letter_short_i",
+    "bielorussian_cyrillic_small_letter_i": "ukrainian_cyrillic_small_letter_i",
+    "cyrillic_small_letter_kha": "cyrillic_small_letter_ha",
+    "cyrillic_small_letter_ge": "cyrillic_small_letter_ghe",
+    "cyrillic_small_letter_ia": "cyrillic_small_letter_ya",
+    "cyrillic_small_letter_iu": "cyrillic_small_letter_yu",
+    "cyrillic_small_letter_yeri": "cyrillic_small_letter_yeru",
+    "cyrillic_small_letter_reversed_e": "cyrillic_small_letter_e",
+    "cyrillic_small_letter_ii": "cyrillic_small_letter_i",
+    "cyrillic_small_letter_short_ii": "cyrillic_small_letter_short_i",
+    "ukrainian_cyrillic_small_letter_ghe_with_upturn": "cyrillic_small_letter_ghe_with_upturn",
+    "ukrainian_cyrillic_capital_letter_ghe_with_upturn": "cyrillic_capital_letter_ghe_with_upturn",
+    "rightanglequote": "guillemotright",
+}
+
 KT_LATIN = {
     'nul': '␀',
     'Control_a': 'C-a',
@@ -11,9 +79,9 @@ KT_LATIN = {
     'Control_e': 'C-e',
     'Control_f': 'C-f',
     'Control_g': 'C-g',
-    'BackSpace': 'C-h',
-    'Tab': 'TAB',
-    'Linefeed': 'C-j',
+    'BackSpace': 'BS',  # C-h
+    'Tab': 'TAB',  # C-i
+    'Linefeed': 'LF',  # C-j
     'Control_k': 'C-k',
     'Control_l': 'C-l',
     'Control_m': 'C-m',
@@ -181,6 +249,7 @@ for i in range(64):
 for keysym, label in KT_LATIN.items():
     LABELS[f'Meta_{keysym}'] = f'M-{label}'
 
+
 def keysym_label(keysym):
     prefix = ""
     if keysym.startswith('+'):
@@ -188,6 +257,15 @@ def keysym_label(keysym):
         keysym = keysym[1:]
     if keysym.startswith('U+'):
         return prefix + chr(int(keysym[2:], 16))
+    if keysym in keysym_synonyms:
+        keysym = keysym_synonyms[keysym]
+    if keysym.startswith('Meta_'):
+        non_meta_keysym = keysym[len('Meta_'):]
+        if non_meta_keysym in keysym_synonyms:
+            non_meta_keysym = keysym_synonyms[non_meta_keysym]
+        if non_meta_keysym in KT_LATIN:
+            return prefix + 'M-' + KT_LATIN[non_meta_keysym]
+        raise ValueError(f'Unknown keysym: {keysym}')
     return prefix + LABELS.get(keysym, keysym)
 
 
@@ -455,74 +533,6 @@ class HBlock:
             ctx = ctx.shift(child_width, 0)
         return svg, total_width, height
 
-# from https://github.com/legionus/kbd/blob/master/src/libkeymap/syms.synonyms.h
-keysym_synonyms = {
-    "Control_h": "BackSpace",
-    "Control_i": "Tab",
-    "Control_j": "Linefeed",
-    "Home": "Find",
-    "End": "Select",
-    "PageUp": "Prior",
-    "PageDown": "Next",
-    "multiplication": "multiply",
-    "pound": "sterling",
-    "pilcrow": "paragraph",
-    "Oslash": "Ooblique",
-    "Shift_L": "ShiftL",
-    "Shift_R": "ShiftR",
-    "Control_L": "CtrlL",
-    "Control_R": "CtrlR",
-    "AltL": "Alt",
-    "AltR": "AltGr",
-    "Alt_L": "Alt",
-    "Alt_R": "AltGr",
-    "AltGr_L": "Alt",
-    "AltGr_R": "AltGr",
-    "AltLLock": "Alt_Lock",
-    "AltRLock": "AltGr_Lock",
-    "SCtrl": "SControl",
-    "Spawn_Console": "KeyboardSignal",
-    "Uncaps_Shift": "CapsShift",
-    "lambda": "lamda",
-    "Lambda": "Lamda",
-    "xi": "ksi",
-    "Xi": "Ksi",
-    "chi": "khi",
-    "Chi": "Khi",
-    "tilde": "asciitilde",
-    "circumflex": "asciicircum",
-    "dead_ogonek": "dead_cedilla",
-    "dead_caron": "dead_circumflex",
-    "dead_breve": "dead_tilde",
-    "dead_doubleacute": "dead_tilde",
-    "Idotabove": "Iabovedot",
-    "dotlessi": "idotless",
-    "no-break_space": "nobreakspace",
-    "paragraph_sign": "section",
-    "soft_hyphen": "hyphen",
-    "bielorussian_cyrillic_capital_letter_i": "ukrainian_cyrillic_capital_letter_i",
-    "cyrillic_capital_letter_kha": "cyrillic_capital_letter_ha",
-    "cyrillic_capital_letter_ge": "cyrillic_capital_letter_ghe",
-    "cyrillic_capital_letter_ia": "cyrillic_capital_letter_ya",
-    "cyrillic_capital_letter_iu": "cyrillic_capital_letter_yu",
-    "cyrillic_capital_letter_yeri": "cyrillic_capital_letter_yeru",
-    "cyrillic_capital_letter_reversed_e": "cyrillic_capital_letter_e",
-    "cyrillic_capital_letter_ii": "cyrillic_capital_letter_i",
-    "cyrillic_capital_letter_short_ii": "cyrillic_capital_letter_short_i",
-    "bielorussian_cyrillic_small_letter_i": "ukrainian_cyrillic_small_letter_i",
-    "cyrillic_small_letter_kha": "cyrillic_small_letter_ha",
-    "cyrillic_small_letter_ge": "cyrillic_small_letter_ghe",
-    "cyrillic_small_letter_ia": "cyrillic_small_letter_ya",
-    "cyrillic_small_letter_iu": "cyrillic_small_letter_yu",
-    "cyrillic_small_letter_yeri": "cyrillic_small_letter_yeru",
-    "cyrillic_small_letter_reversed_e": "cyrillic_small_letter_e",
-    "cyrillic_small_letter_ii": "cyrillic_small_letter_i",
-    "cyrillic_small_letter_short_ii": "cyrillic_small_letter_short_i",
-    "ukrainian_cyrillic_small_letter_ghe_with_upturn": "cyrillic_small_letter_ghe_with_upturn",
-    "ukrainian_cyrillic_capital_letter_ghe_with_upturn": "cyrillic_capital_letter_ghe_with_upturn",
-    "rightanglequote": "guillemotright",
-}
-
 
 def default_keycode_keysyms(x, X, selected_columns):
     control = f'Control_{x.lower()}'
@@ -532,9 +542,6 @@ def default_keycode_keysyms(x, X, selected_columns):
         f'Meta_{x}', f'Meta_{X}', f'Meta_{x}', f'Meta_{X}',
         f'Meta_{control}', f'Meta_{control}', f'Meta_{control}', f'Meta_{control}',
     ]
-    for i, keysym in enumerate(keysyms):
-        if keysym in keysym_synonyms:
-            keysyms[i] = keysym_synonyms[keysym]
     keysyms *= 16
     result = ['VoidSymbol']*(selected_columns[-1] + 1)
     for column in selected_columns:
@@ -606,15 +613,11 @@ def load_keymap(filename, *, keymap=None):
                     keysyms = []
                 elif len(definition) == 1:
                     keysym = definition[0]
-                    if keysym in keysym_synonyms:
-                        keysym = keysym_synonyms[keysym]
                     keysyms = expand_one_keysym(keysym, columns)
                 else:
                     keysyms = ['VoidSymbol']*(columns[-1] + 1)
                     for i, keysym in enumerate(definition):
                         column = columns[i]
-                        if keysym in keysym_synonyms:
-                            keysym = keysym_synonyms[keysym]
                         keysyms[column] = keysym
                 keymap[code] = keysyms
             elif starts_with_modifier(line) != "":
@@ -628,8 +631,6 @@ def load_keymap(filename, *, keymap=None):
                 code, keysym = line.split('=')
                 code = int(code.strip())
                 keysym = keysym.strip()
-                if keysym in keysym_synonyms:
-                    keysym = keysym_synonyms[keysym]
                 if code not in keymap:
                     keymap[code] = []
                 if column >= len(keymap[code]):
